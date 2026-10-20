@@ -1,0 +1,86 @@
+from app.backend.schemas.ai import (
+    AiConfigRead,
+    AiConfigUpdate,
+    AiCreate,
+    AiModelInfo,
+    AiModelsRead,
+    AiRead,
+    AiUpdate,
+)
+from app.backend.schemas.chat import (
+    ChatCreate,
+    ChatDetail,
+    ChatRead,
+    MessageCreate,
+    MessageRead,
+    RegenerateRequest,
+    SourceItem,
+)
+from app.backend.schemas.context import ContextRead, ContextUpdate
+from app.backend.schemas.health import HealthRead
+from app.backend.schemas.plan import (
+    GoalCreate,
+    GoalRead,
+    GoalUpdate,
+    SubtaskCreate,
+    SubtaskRead,
+    SubtaskUpdate,
+    TaskCreate,
+    TaskRead,
+    TaskUpdate,
+)
+from app.backend.schemas.schedule import EventCreate, EventRead, EventUpdate
+from app.backend.schemas.settings import (
+    DigestRead,
+    IntegrationTestRead,
+    PomodoroComplete,
+    SettingsRead,
+    SettingsUpdate,
+)
+from app.backend.schemas.voice import (
+    VoiceInfoRead,
+    VoiceSpeakRequest,
+    VoiceStatusRead,
+    VoiceTranscriptRead,
+)
+
+__all__ = [
+    "AiConfigRead",
+    "AiConfigUpdate",
+    "AiCreate",
+    "AiModelInfo",
+    "AiModelsRead",
+    "AiRead",
+    "AiUpdate",
+    "ChatCreate",
+    "ChatDetail",
+    "ChatRead",
+    "ContextRead",
+    "ContextUpdate",
+    "DigestRead",
+    "EventCreate",
+    "EventRead",
+    "EventUpdate",
+    "GoalCreate",
+    "GoalRead",
+    "GoalUpdate",
+    "HealthRead",
+    "IntegrationTestRead",
+    "MessageCreate",
+    "MessageRead",
+    "PomodoroComplete",
+    "RegenerateRequest",
+    "SettingsRead",
+    "SettingsUpdate",
+    "SourceItem",
+    "SubtaskCreate",
+    "SubtaskRead",
+    "SubtaskUpdate",
+    "TaskCreate",
+    "TaskRead",
+    "TaskUpdate",
+    "VoiceInfoRead",
+    "VoiceSpeakRequest",
+    "VoiceStatusRead",
+    "VoiceTranscriptRead",
+]
