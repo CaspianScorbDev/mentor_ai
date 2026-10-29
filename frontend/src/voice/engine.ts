@@ -4,8 +4,16 @@ function apiRoot(): string {
   return ROOT.replace(/\/$/, "");
 }
 
+function socketBase(): string {
+  const root = apiRoot();
+  if (root) return root.replace(/^http/, "ws");
+  // Same-origin build (empty VITE_API_BASE): WebSocket needs an absolute URL.
+  const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${scheme}://${window.location.host}`;
+}
+
 export function voiceSocketUrl(): string {
-  return `${apiRoot().replace(/^http/, "ws")}/api/v1/voice/tts`;
+  return `${socketBase()}/api/v1/voice/tts`;
 }
 
 export interface VoiceInfoDto {

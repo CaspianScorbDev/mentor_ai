@@ -108,6 +108,7 @@ export default function App() {
   const isMobile = useMediaQuery("(max-width: 820px)");
   const activeChatRef = useRef<ChatDetail | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const lastOptionsRef = useRef<StreamOptions | undefined>(undefined);
 
   useEffect(() => {
     activeChatRef.current = activeChat;
@@ -366,6 +367,7 @@ export default function App() {
   const send = useCallback(
     (text: string, options?: StreamOptions) => {
       if (busy) return;
+      lastOptionsRef.current = options;
       askMentor(text, streamHandlers(), options);
     },
     [askMentor, busy, streamHandlers],
@@ -375,7 +377,8 @@ export default function App() {
     (options?: StreamOptions) => {
       const chat = activeChatRef.current;
       if (!chat || busy) return;
-      submitRequest(chat.id, streamHandlers(), options, (signal, wrapped) =>
+      const effective = options ?? lastOptionsRef.current;
+      submitRequest(chat.id, streamHandlers(), effective, (signal, wrapped) =>
         regenerateMessage(
           chat.id,
           {
@@ -398,7 +401,7 @@ export default function App() {
             },
           },
           signal,
-          options,
+          effective,
         ),
       );
     },
@@ -409,6 +412,7 @@ export default function App() {
     (message: Message, text: string, options?: StreamOptions) => {
       const chat = activeChatRef.current;
       if (!chat || busy) return;
+      const effective = options ?? lastOptionsRef.current;
       setActiveChat((prev) => {
         if (!prev) return prev;
         const index = prev.messages.findIndex((item) => item.id === message.id);
@@ -437,7 +441,7 @@ export default function App() {
             },
           },
           signal,
-          options,
+          effective,
         ),
       );
     },

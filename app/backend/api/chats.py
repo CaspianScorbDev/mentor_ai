@@ -40,6 +40,7 @@ router = APIRouter(prefix="/chats", tags=["chats"])
 
 SEARCH_UNAVAILABLE = "[Веб-поиск сейчас недоступен. Скажи об этом явно и ответь по своим знаниям.]"
 SEARCH_EMPTY = "[Поиск не дал результатов. Ответь по своим знаниям.]"
+VOICE_MAX_TOKENS = 400
 
 
 def _sse(payload: dict[str, object]) -> str:
@@ -70,8 +71,6 @@ def _sources_payload(results: list[SearchResult]) -> list[dict[str, str]]:
 
 
 def _apply_flags(payload: MessageCreate | RegenerateRequest, persona: Persona) -> None:
-    if payload.voice:
-        persona.system_prompt = f"{persona.system_prompt}\n\n{VOICE_STYLE_PROMPT}"
     if payload.deep_thinking:
         persona.think = True
     if payload.code_mode:
@@ -79,6 +78,12 @@ def _apply_flags(payload: MessageCreate | RegenerateRequest, persona: Persona) -
         persona.temperature = min(persona.temperature, 0.25)
     if payload.files_mode:
         persona.system_prompt = f"{persona.system_prompt}\n\n{FILES_MODE_PROMPT}"
+    if payload.voice:
+        # Spoken replies must start immediately: any reasoning pass is dead air
+        # the user hears as silence, so voice always wins over deep thinking.
+        persona.think = False
+        persona.max_tokens = min(persona.max_tokens or cfg.llm.max_tokens, VOICE_MAX_TOKENS)
+        persona.system_prompt = f"{persona.system_prompt}\n\n{VOICE_STYLE_PROMPT}"
 
 
 async def _prepare(

@@ -9,7 +9,6 @@ from app.domain.types.category import Category
 from app.domain.types.plan import PlanStage
 
 
-
 class Product(TimestampMixin, Base):
     __tablename__ = "products"
 

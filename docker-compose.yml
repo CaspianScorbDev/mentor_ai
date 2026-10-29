@@ -25,6 +25,10 @@ services:
     environment:
       DATABASE__HOST: db
       DATABASE__PORT: 5432
+      # Ollama runs on the host machine, not in this compose network.
+      LLM__OLLAMA_BASE_URL: http://host.docker.internal:11434/v1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       db:
         condition: service_healthy
@@ -33,7 +37,13 @@ services:
     volumes:
       - ./.env:/app/.env:ro
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -42,8 +52,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     depends_on:
       api:
         condition: service_healthy

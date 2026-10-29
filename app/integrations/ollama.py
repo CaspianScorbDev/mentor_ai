@@ -56,12 +56,16 @@ class OllamaClient(OpenAICompatibleClient):
         model: str | None,
         temperature: float,
         max_tokens: int,
+        think: bool,
     ) -> AsyncIterator[StreamChunk]:
         payload: dict[str, Any] = {
             "model": model or self.model,
             "messages": list(messages),
             "stream": True,
-            "think": True,
+            # Ollama's OpenAI-compatible endpoint ignores `think`, so the native
+            # one is used for every stream. `think=False` guarantees no reasoning
+            # pass (critical for voice) and `think=True` surfaces it as a channel.
+            "think": think,
             "options": {"temperature": temperature, "num_predict": max_tokens},
         }
         async with self._http_client().stream(
@@ -94,19 +98,11 @@ class OllamaClient(OpenAICompatibleClient):
         max_tokens: int = 1024,
         think: bool = False,
     ) -> AsyncIterator[StreamChunk]:
-        if think:
-            async for chunk in self._stream_native(
-                messages,
-                model=model,
-                temperature=temperature,
-                max_tokens=max_tokens,
-            ):
-                yield chunk
-            return
-        async for chunk in super().stream(
+        async for chunk in self._stream_native(
             messages,
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
+            think=think,
         ):
             yield chunk

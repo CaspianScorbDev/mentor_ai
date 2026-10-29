@@ -17,13 +17,17 @@ dependencies = [
     "httpx (>=0.28.1,<0.29.0)",
     "fastapi (>=0.115.0,<1.0.0)",
     "uvicorn[standard] (>=0.34.0,<1.0.0)",
-    "python-multipart (>=0.0.20,<0.1.0)",
-    "kittenml (>=0.9.4,<0.10.0)",
-    "soundfile (>=0.14.0,<0.15.0)"
+    "python-multipart (>=0.0.20,<0.1.0)"
 ]
 
 [tool.poetry]
 package-mode = false
+
+# Local voice engine (torch + CUDA). Excluded from the Docker image,
+# which uses the hosted KittenML backend instead.
+[tool.poetry.group.voice.dependencies]
+kittenml = ">=0.9.4,<0.10.0"
+soundfile = ">=0.14.0,<0.15.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.3.0,<10.0.0"
